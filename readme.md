@@ -16,55 +16,44 @@
 
 <p>&nbsp;</p>
 
-This template can be used to create Ortus based BoxLang Modules.  To use, just click the `Use this Template` button in the github repository: https://github.com/boxlang-modules/module-template and run the setup task from where you cloned it.
+This template allows you to build BoxLang Lambda projects that you can deploy to AWS Lambdas.  This template leverages CommandBox and Gradle for the build process and dependencies.  If your lambda leverages Java libraries, then add them to the `build.gradle` file.  If your lambda leverages BoxLang libraries, then add them to the `box.json` file.
 
-```bash
-box task run taskFile=src/build/SetupTemplate
-```
-
-The `SetupTemplate` task will ask you for your module name, id and description and configure the template for you! Enjoy!
+The main lambda code is located in the `src/main/bx/Lambda.bx` folder and the test code is located in the `src/test/java/com/myproject` folder.
 
 ## Directory Structure
 
 Here is a brief overview of the directory structure:
 
-* `.github/workflows` - These are the github actions to test and build the module via CI
 * `build` - This is a temporary non-sourced folder that contains the build assets for the module that gradle produces
-* `gradle` - The gradle wrapper and configuration
+* `gradle` - The gradle wrapper and configuration, goes into source control don't remove
 * `src` - Where your module source code lives
+* `workbench` - The workbench for your module including several Lambda resources
 * `.cfformat.json` - A CFFormat using the Ortus Standards
 * `.editorconfig` - Smooth consistency between editors
 * `.gitattributes` - Git attributes
 * `.gitignore` - Basic ignores. Modify as needed.
 * `.markdownlint.json` - A linting file for markdown docs
 * `.ortus-java-style.xml` - Ortus Java Style for IntelliJ, VScode, Eclipse.
-* `box.json` - The box.json for your module used to publish to ForgeBox
-* `build.gradle` - The gradle build file for the module
+* `box.json` - The box.json for your dependencies or if you want to publish to ForgeBox
+* `build.gradle` - The gradle build file for the project.
 * `changelog.md` - A nice changelog tracking file
-* `CONTRIBUTING.md` - A contribution guideline
-* `gradlew` - The gradle wrapper
-* `gradlew.bat` - The gradle wrapper for windows
-* `ModuleConfig.cfc` - Your module's configuration. Modify as needed.
-* `readme.md` - Your module's readme. Modify as needed.
+* `gradlew` - The gradle wrapper, don't remove
+* `gradlew.bat` - The gradle wrapper for windows, don't remove
 * `settings.gradle` - The gradle settings file
 
-Here is a brief overview of the source directory structure:
+### Source Directory
 
-* `build` - Build scripts and assets
-* `main` - The main module source code
+Here is a brief overview of the `src` directory structure:
+
+* `main` - Gradle source set for main code
   * `bx` - The BoxLang source code
-  * `ModuleConfig.bx` - The BoxLang module configuration
-    * `bifs` - BoxLang built-in functions
-    * `components` - BoxLang components
-    * `config` - BoxLang configuration, schedulers, etc.
-    * `interceptors` - BoxLang interceptors
-    * `libs` - Java libraries to use that are NOT managed by gradle
-    * `models` - BoxLang models
-  * `java` - Java source code
-  * `resources` - Resources for the module placed in final jar
+    * `Lambda.bx` - Your lambda code to deploy
+    * Any other BoxLang code you need
 * `test`
-  * `bx` - The BoxLang test code
-  * `java` - Java test code
+  * `java` - Java test code for the lambda just like if you were running it in AWS
+   	* `com` - Your package
+   	  * `myproject` - Your project package
+        * `LambdaRunnerTest.java` - Your test code for the lambda
   * `resources` - Resources for testing
     * `libs` - BoxLang binary goes here for now.
 
@@ -103,19 +92,6 @@ This will store the binary under `/src/test/resources/libs` for you to use in yo
 ## Tests
 
 Please use the `src/test` folder for your unit tests.  You can either test using TestBox o JUnit if it's Java.
-
-## Github Actions Automation
-
-The github actions will clone, test, package, deploy your module to ForgeBox and the Ortus S3 accounts for API Docs and Artifacts.  So please make sure the following environment variables are set in your repository.
-
-> Please note that most of them are already defined at the org level
-
-* `FORGEBOX_TOKEN` - The Ortus ForgeBox API Token
-* `AWS_ACCESS_KEY` - The travis user S3 account
-* `AWS_ACCESS_SECRET` - The travis secret S3
-
-> Please contact the admins in the `#infrastructure` channel for these credentials if needed
-
 
 ## Ortus Sponsors
 
