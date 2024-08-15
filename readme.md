@@ -70,8 +70,17 @@ Before you get started, you need to run the `downloadBoxLang` task in order to d
 gradle downloadBoxLang
 ```
 
-This will store the binary under `/src/test/resources/libs` for you to use in your tests and compiler. Here are some basic tasks
+This will store the binary under `/src/test/resources/libs` for you to use in your tests and compiler.  Then you can create your Lambda.  Once you are ready you can run the following to create the final zip to deploy to AWS.
 
+```bash
+gradle build
+```
+
+This will create a `build/distributions` folder with the final zip file to deploy to AWS.
+
+### Basic Tasks
+
+Here are some basic tasks
 
 | Task                | Description                                                                                                        	|
 |---------------------|---------------------------------------------------------------------------------------------------------------------|
