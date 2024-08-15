@@ -23,10 +23,10 @@ dependencies {
 	// Until BoxLang is published to Maven Central
 	// Look for it in the local build directory
 	// You must run `./gradle build -x test` in the BoxLang project
-    compileOnly files( 'src/test/resources/libs/boxlang-aws-lambda-1.0.0-all.jar' )
+    compileOnly files( 'src/test/resources/libs/boxlang-aws-lambda-' + boxlangVersion + '-all.jar' )
 
     // Testing Dependencies
-	testImplementation files( 'src/test/resources/libs/boxlang-aws-lambda-1.0.0-all.jar' )
+	testImplementation files( 'src/test/resources/libs/boxlang-aws-lambda-' + boxlangVersion + '-all.jar' )
 	testImplementation 'com.amazonaws:aws-lambda-java-core:1.2.3'
     testImplementation 'org.slf4j:slf4j-nop:2.0.6'
     testImplementation "org.junit.jupiter:junit-jupiter:5.+"
