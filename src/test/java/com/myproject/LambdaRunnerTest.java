@@ -52,6 +52,7 @@ public class LambdaRunnerTest {
 		event.put( "name", "Ortus Solutions" );
 		event.put( "when", Instant.now().toString() );
 
+		// EXECUTE THE LAMBDA
 		var		results	= runner.handleRequest( event, context );
 		IStruct	body	= ( IStruct ) results.get( "BODY" );
 
