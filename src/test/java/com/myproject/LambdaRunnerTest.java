@@ -26,8 +26,6 @@ import java.util.HashMap;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import com.amazonaws.services.lambda.runtime.Context;
 
@@ -36,8 +34,6 @@ import ortus.boxlang.runtime.scopes.Key;
 import ortus.boxlang.runtime.types.IStruct;
 
 public class LambdaRunnerTest {
-
-	private static final Logger logger = LoggerFactory.getLogger( LambdaRunnerTest.class );
 
 	@DisplayName( "Test your Lambda.bx" )
 	@Test
