@@ -5,11 +5,9 @@ build/**
 ### IntelliJ IDEA ###
 .idea/
 
-
-
 ### Mac OS ###
 .DS_Store
 
-### BOXLANG ###
-/libs/
-src/test/resources/libs/
+### BOXLANG + Java Dependencies ###
+src/resources/libs/**
+src/resources/modules/**
