@@ -27,7 +27,6 @@ dependencies {
 	// Includes BoxLang + SLF4J + AWS Lambda Core
     implementation files( 'src/resources/libs/boxlang-aws-lambda-' + boxlangVersion + '-all.jar' )
 	// Lambda Implementation Dependencies Go Below
-	implementation 'org.yaml:snakeyaml:2.3'
 
     // Testing Dependencies
 	//testImplementation files( 'src/resources/libs/boxlang-aws-lambda-' + boxlangVersion + '-all.jar' )
