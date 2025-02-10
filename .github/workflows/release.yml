@@ -125,7 +125,7 @@ jobs:
       - name: Update AWS Lambda Function
         uses: kazimanzurrashid/aws-lambda-update-action@v2.0.3
         with:
-          zip-file: "./build/distributions/${{ env.PROJECT_NAME }}-${{ env.VERSION }}-all.zip"
+          zip-file: "./build/distributions/${{ env.PROJECT_NAME }}-${{ env.VERSION }}.zip"
           lambda-name: ${{ env.PROJECT_NAME }}-${{ env.DEPLOY_TIER }}
         env:
           AWS_REGION: ${{ env.AWS_REGION }}
