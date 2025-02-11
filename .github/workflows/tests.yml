@@ -26,7 +26,7 @@ jobs:
         uses: actions/setup-java@v4
         with:
           distribution: "temurin"
-          java-version: ${{ matrix.jdkVersion }}
+          java-version: ${{ env.JDK_VERSION }}
 
       - name: Setup Gradle
         uses: gradle/gradle-build-action@v3
@@ -42,7 +42,7 @@ jobs:
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: tests-${{ matrix.os }}-${{ matrix.jdkVersion }}
+          name: tests-${{ env.JDK_VERSION }}
           path: |
             **/build/reports/tests/**
             **/build/test-results/**
