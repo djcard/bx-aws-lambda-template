@@ -63,7 +63,7 @@ jobs:
         id: current_version
         run: |
           # Read name and version of the project
-          local PROJECT_NAME=$(grep '^rootProject.name=' settings.gradle | cut -d'=' -f2 | tr -d "'\"")
+          PROJECT_NAME=$(grep '^rootProject.name=' settings.gradle | cut -d'=' -f2 | tr -d "'\"")
           echo "PROJECT_NAME=$PROJECT_NAME" >> $GITHUB_ENV
 
           TMPVERSION=$(grep '^version=' gradle.properties | cut -d'=' -f2)
