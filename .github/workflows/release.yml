@@ -22,7 +22,6 @@ on:
   workflow_dispatch:
 
 env:
-  PROJECT_NAME: ${{ github.event.repository.name }}
   SNAPSHOT: ${{ inputs.snapshot || false }}
   JDK_VERSION: 21
   GRADLE_VERSION: 8.7
@@ -63,15 +62,19 @@ jobs:
       - name: Setup Environment Variables For Build Process
         id: current_version
         run: |
+          # Read name and version of the project
+          local PROJECT_NAME=$(grep '^rootProject.name=' settings.gradle | cut -d'=' -f2 | tr -d "'\"")
+          echo "PROJECT_NAME=$PROJECT_NAME" >> $GITHUB_ENV
+
           TMPVERSION=$(grep '^version=' gradle.properties | cut -d'=' -f2)
           echo "VERSION=$TMPVERSION" >> $GITHUB_ENV
 
-          # Branche
+          # Branch Detection
           echo "Github Ref is $GITHUB_REF"
           echo "BRANCH=main" >> $GITHUB_ENV
           echo "DEPLOY_TIER=production" >> $GITHUB_ENV
 
-          # Snapshot
+          # Snapshot Detection
           if [ $GITHUB_REF == 'refs/heads/development' ]
           then
             echo "BRANCH=development" >> $GITHUB_ENV
