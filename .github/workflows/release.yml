@@ -26,7 +26,6 @@ env:
   JDK_VERSION: 21
   GRADLE_VERSION: 8.7
   BUILD_ID: ${{ github.run_number }}
-  AWS_REGION: us-east-1
 
 jobs:
   #############################################
@@ -127,7 +126,7 @@ jobs:
           zip-file: "./build/distributions/${{ env.PROJECT_NAME }}-${{ env.VERSION }}.zip"
           lambda-name: ${{ env.PROJECT_NAME }}-${{ env.DEPLOY_TIER }}
         env:
-          AWS_REGION: ${{ env.AWS_REGION }}
+          AWS_REGION: ${{ secrets.AWS_REGION }}
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_PUBLISHER_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_PUBLISHER_KEY }}
 
