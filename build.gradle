@@ -93,6 +93,11 @@ task buildLambdaZip( type: Zip ) {
         into 'modules/'
     }
 
+	// Add Application.bx
+	from( 'src/resources/Application.bx' ) {
+		into '' // Ensure it's placed in the root
+	}
+
 	// Include dependencies inside the `lib/` folder
 	into( 'lib' ) {
 		// All the Jars in the src/test/resources/libs directory
