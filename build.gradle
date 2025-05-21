@@ -93,6 +93,10 @@ task buildLambdaZip( type: Zip ) {
         into 'modules/'
     }
 
+	from('src/resources/boxlang_modules'){
+		into 'boxlang_modules'
+	}
+
 	// Include dependencies inside the `lib/` folder
 	into( 'lib' ) {
 		// All the Jars in the src/test/resources/libs directory
