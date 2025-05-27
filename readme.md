@@ -47,6 +47,7 @@ Here is a brief overview of the `src` directory structure:
 
 * `main` - Gradle source set for main code
   * `bx` - The BoxLang source code
+    * `Application.bx` - The main application file that is executed when the lambda is invoked
     * `Lambda.bx` - Your lambda code to deploy
     * Any other BoxLang code you need
 * `test`
@@ -55,12 +56,18 @@ Here is a brief overview of the `src` directory structure:
    	  * `myproject` - Your project package
         * `LambdaRunnerTest.java` - Your test code for the lambda
   * `resources` - Resources for testing
+    * `boxlang.json` - Custom BoxLang configuration for the lambda
     * `libs` - BoxLang binary goes here for now.
+    * `boxlang_modules` - BoxLang modules that will be packaged with the lambda (Not in source control)
 
 ## Project Properties
 
 The project name is defined in the `settings.gradle` file.  You can change it there.
 The project version, BoxLang Version and JDK version is defined in the `build.gradle` file.  You can change it there.
+
+## BoxLang Modules
+
+If you would like your Lambda to use modules, you can do so by installing them at the `src/resources/boxlang_modules` folder.  This is where you can place your BoxLang modules that you want to package with your Lambda.  You can also use the `box.json` file to define your dependencies and modules and making sure the installation path is set to `src/resources/boxlang_modules`.  This will ensure that the modules are packaged with your Lambda when you build it.
 
 ## Gradle Tasks
 

@@ -1,0 +1,38 @@
+class{
+
+	this.name = "My-AWS-Lambda"
+
+	public boolean function onApplicationStart() {
+        return true;
+    }
+
+    public void function onApplicationEnd( struct applicationScope={} ) {
+        return;
+    }
+
+	public boolean function onRequestStart( required string targetPage ) {
+        return true;
+    }
+
+    public void function onRequest( required string targetPage ) {
+        include arguments.targetPage;
+        return;
+    }
+
+    public void function onRequestEnd() {
+        return;
+    }
+
+    public void function onAbort( required string targetPage ) {
+        return;
+    }
+
+    public void function onError( required any exception, required string eventName ) {
+        return;
+    }
+
+    public boolean function onMissingTemplate( required string targetPage ) {
+        return true;
+    }
+
+}

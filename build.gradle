@@ -81,7 +81,9 @@ task buildLambdaZip( type: Zip ) {
 	archiveFileName = "${project.name}-${version}.zip"
 
 	// Add Lambda.bx to the root of the ZIP
-	from 'src/main/bx/Lambda.bx'
+	from( 'src/main/bx' ) {
+		into ''
+	}
 
 	// Add boxlang.json to the root of the ZIP
     from( 'src/resources/boxlang.json' ) {
@@ -89,8 +91,8 @@ task buildLambdaZip( type: Zip ) {
     }
 
 	// Add BoxLang Modules
-    from( 'src/resources/modules/' ) {
-        into 'modules/'
+    from( 'src/resources/boxlang_modules/' ) {
+        into 'boxlang_modules/'
     }
 
 	// Include dependencies inside the `lib/` folder

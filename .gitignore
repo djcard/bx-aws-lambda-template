@@ -11,4 +11,4 @@ bin/**
 
 ### BOXLANG + Java Dependencies ###
 src/resources/libs/**
-src/resources/modules/**
+src/resources/boxlang_modules/**

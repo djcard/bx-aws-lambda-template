@@ -9,10 +9,24 @@
  * ${env.variablename:defaultValue} - The value of a valid environment variable or the default value. Example: ${env.CFCONFIG_HOME:/etc/cfconfig}
  */
 {
+	// Extensions BoxLang will process as classes
+	"validClassExtensions": [
+		"bx",
+		// Moving to compat at final release
+		"cfc"
+	],
+	// Additional Extensions BoxLang will process as templates.  The default extensions such as bxm, bxs, cfm, cfs, etc. are always processed as templates
+	// This is used by the RunnableLoader
+	"validTemplateExtensions": [],
+	// Where all generated classes will be placed
+	"classGenerationDirectory": "${boxlang-home}/classes",
 	// This puts the entire runtime in debug mode
 	// Which will produce lots of debug output and metrics
 	// Also the debugging error template will be used if turned on
 	"debugMode": false,
+	// This setting if enabled will remove all the class files from the class generation directory
+	// This is useful for debugging and testing, but not recommended for production
+	"clearClassFilesOnStartup": false,
 	// This enables the class locations cache for the runtime.  It's used when resolving class paths
 	// mostly using mappings, per request mappings, etc.
 	// We recommend you always enable this setting, unless debugging a very specific issue
@@ -23,7 +37,9 @@
 	"trustedCache": true,
 	// The default timezone for the runtime; defaults to the JVM timezone if empty
 	// Please use the IANA timezone database values
-	"timezone": "",
+	// On AWS YOU CAN use: ${env:TZ:UTC} to use the environment variable TZ or default to UTC
+	// https://docs.aws.amazon.com/lambda/latest/dg/configuration-envvars.html#configuration-envvars-runtime
+	"timezone": "${env:TZ:UTC}",
 	// The default locale for the runtime; defaults to the JVM locale if empty
 	// Please use the IETF BCP 47 language tag values
 	"locale": "",
@@ -32,15 +48,15 @@
 	// By default BoxLang uses high-precision mathematics via BigDecimal operations
 	// You can turn this off here for all applications
 	"useHighPrecisionMath": true,
-	// If true, you can call implicit accessors/mutators on object properties. By default it is enabled
-	// You can turn it on here for all applications or in the Application.cfc
-	"invokeImplicitAccessor": true,
 	// Use Timespan syntax: "days, hours, minutes, seconds"
 	"applicationTimeout": "0,0,0,0",
 	// The request timeout for a request in seconds; 0 means no timeout
-	"requestTimeout": "0,0,0,0",
-	// The session timeout: 30 minutes
-	"sessionTimeout": "0,0,30,0",
+	// We match 15 minutes that lambda has as a default
+	// Make sure you ADD this to the Lambda itself.
+	// https://docs.aws.amazon.com/lambda/latest/dg/configuration-timeout.html
+	"requestTimeout": "0,0,15,0",
+	// Disabled unless you want to use your own tracking of sessions
+	"sessionTimeout": "0,0,0,0",
 	// Where sessions will be stored by default.  This has to be a name of a registered cache
 	// or the keyword "memory" to indicate our auto-created cache.
 	// This will apply to ALL applications unless overridden in the Application.cfc
@@ -49,8 +65,9 @@
 	"mappings": {
 		"/": "${user-dir}"
 	},
-	// A collection of BoxLang module directories, they must be absolute paths
+	// A collection of BoxLang module directories, they must be absolute paths or expanded paths
 	"modulesDirectory": [
+		"${user-dir}/boxlang_modules",
 		"${boxlang-home}/modules"
 	],
 	// A collection of BoxLang custom tag directories, they must be absolute paths
@@ -99,7 +116,7 @@
 				// Valid values are: "file", "console",
 				// Coming soon: "smtp", "socket", "db", "syslog" or "java class name"
 				// Please note that we only use Rolling File Appenders
-				"appender": "file",
+				"appender": "console",
 				// Use the defaults from the runtime
 				"appenderArguments": {},
 				// The available options are "text" and "json"
@@ -116,7 +133,7 @@
 				// Valid values are: "file", "console",
 				// Coming soon: "smtp", "socket", "db", "syslog" or "java class name"
 				// Please note that we only use Rolling File Appenders
-				"appender": "file",
+				"appender": "console",
 				// Use the defaults from the runtime
 				"appenderArguments": {},
 				// The available options are "text" and "json"
@@ -133,7 +150,7 @@
 				// Valid values are: "file", "console",
 				// Coming soon: "smtp", "socket", "db", "syslog" or "java class name"
 				// Please note that we only use Rolling File Appenders
-				"appender": "file",
+				"appender": "console",
 				// Use the defaults from the runtime
 				"appenderArguments": {},
 				// The available options are "text" and "json"
@@ -150,7 +167,7 @@
 				// Valid values are: "file", "console",
 				// Coming soon: "smtp", "socket", "db", "syslog" or "java class name"
 				// Please note that we only use Rolling File Appenders
-				"appender": "file",
+				"appender": "console",
 				// Use the defaults from the runtime
 				"appenderArguments": {},
 				// The available options are "text" and "json"
@@ -167,7 +184,7 @@
 				// Valid values are: "file", "console",
 				// Coming soon: "smtp", "socket", "db", "syslog" or "java class name"
 				// Please note that we only use Rolling File Appenders
-				"appender": "file",
+				"appender": "console",
 				// Use the defaults from the runtime
 				"appenderArguments": {},
 				// The available options are "text" and "json"
@@ -184,7 +201,7 @@
 				// Valid values are: "file", "console",
 				// Coming soon: "smtp", "socket", "db", "syslog" or "java class name"
 				// Please note that we only use Rolling File Appenders
-				"appender": "file",
+				"appender": "console",
 				// Use the defaults from the runtime
 				"appenderArguments": {},
 				// The available options are "text" and "json"
@@ -201,7 +218,7 @@
 				// Valid values are: "file", "console",
 				// Coming soon: "smtp", "socket", "db", "syslog" or "java class name"
 				// Please note that we only use Rolling File Appenders
-				"appender": "file",
+				"appender": "console",
 				// Use the defaults from the runtime
 				"appenderArguments": {},
 				// The available options are "text" and "json"
@@ -224,20 +241,51 @@
 	// Global Executors for the runtime
 	// These are managed by the AsyncService and registered upon startup
 	// The name of the executor is the key and the value is a struct of executor settings
-	// Types are: cached, fixed, fork_join, scheduled, single, virtual, work_stealing
+	// Types are: cached, fixed, fork_join, scheduled, single, virtual, work_stealing`
 	// The `threads` property is the number of threads to use in the executor. The default is 20
 	// Some executors do not take in a `threads` property
 	"executors": {
-		"boxlang-tasks": {
-			"type": "scheduled",
-			"threads": 20
+		// Use this for IO bound tasks, does not support scheduling
+		// This is also the default executor for parallel operations
+		// This is also the default when requestion an executor service via executorGet()
+		"io-tasks": {
+			"type": "virtual"
 		},
-		"cacheservice-tasks": {
+		// Use this for CPU bound tasks, supports scheduling
+		"cpu-tasks": {
 			"type": "scheduled",
-			"threads": 20
+			"threads": 10
+		},
+		// Used for all scheduled tasks in the runtime
+		"scheduled-tasks": {
+			"type": "scheduled",
+			"threads": 10
 		}
 	},
-	// You can assign a global default datasource to be used in the language
+	// BoxLang Scheduler
+	// These are managed by the SchedulerService and registered upon startup
+	// or via a boxlang schedule [scheduler.bx] call
+	"scheduler": {
+		// The default scheduler for all scheduled tasks
+		// Each scheduler can have a different executor if needed
+		"executor": "scheduled-tasks",
+		// The cache to leverage for server fixation or distribution
+		"cacheName": "default",
+		// An array of BoxLang Schedulers to register upon startup
+		// Must be an absolute path to the scheduler file
+		// You can use the ${user-dir} or ${boxlang-home} variables or any other environment variable
+		// Example: "schedulers": [ "/path/to/Scheduler.bx" ]
+		"schedulers": [],
+		// You can also define tasks manually here
+		// Every task is an object defined by a unique name
+		// The task object is a struct with the following properties:
+		// - `crontime:string` - The cron time to run the task (optional), defaults to empty string
+		// - `eventhandler:path` - The absolute path to the task event handler(optional), defaults to empty string
+		// - `exclude:any` - Comma-separated list of dates or date range (d1 to d2) on which to not execute the scheduled task
+		// - `file:name` - Name of the log file to store output of the task (optional), defaults to `scheduler`
+		// - `group:string` - The group name of the task (optional), defaults to empty string
+		"tasks": {}
+	},
 	"defaultDatasource": "",
 	// The registered global datasources in the language
 	// The key is the name of the datasource and the value is a struct of the datasource settings
@@ -300,6 +348,56 @@
 				// If enabled, the last access timeout will be used to evict objects from the cache
 				"useLastAccessTimeouts": true
 			}
+		},
+		// This is the holder of all sessions in a BoxLang runtime.
+		// The keys are prefixed by application to create separation.
+		"bxSessions": {
+			"provider": "BoxCacheProvider",
+			"properties": {
+				// How many objects to evict when the cache is full
+				"evictCount": 1,
+				// The eviction policy to use: FIFO, LFU, LIFO, LRU, MFU, MRU, Random
+				"evictionPolicy": "LRU",
+				// The maximum number of objects the cache can hold
+				"maxObjects": 100000,
+				// How long should sessions last for in seconds. Default is 60 minutes.
+				"defaultTimeout": 3600,
+				// The object store to use to store the objects.
+				// The default is a ConcurrentStore which is a thread safe and fast storage.
+				// Available Stores are: BlackHoleStore, ConcurrentSoftReferenceStore, ConcurrentStore, FileSystemStore, Your own.
+				"objectStore": "ConcurrentStore",
+				// The free memory percentage threshold to start evicting objects
+				// Only use if memory is constricted and you need to relieve cache pressure
+				// Please note that this only makes sense depending on which object store you use.
+				"freeMemoryPercentageThreshold": 0,
+				// The frequency in seconds to check for expired objects and expire them using the policy
+				// This creates a BoxLang task that runs every X seconds to check for expired objects
+				// Default is every 2 minutes
+				"reapFrequency": 120,
+				// This makes a session extend it's life when accessed.  So if a users uses anything or puts anything
+				// In session, it will re-issue the timeout.
+				"resetTimeoutOnAccess": true,
+				// Sessions don't rely on the last access timeouts but on the default timeout only.
+				"useLastAccessTimeouts": false
+			}
+		},
+		// Stores all dynamic regular expressions used in the runtime
+		"bxRegex": {
+			"provider": "BoxCacheProvider",
+			"properties": {
+				"evictCount": 1,
+				"evictionPolicy": "LRU",
+				"freeMemoryPercentageThreshold": 0,
+				"maxObjects": 500,
+				// 30 minutes ifnot used
+				"defaultLastAccessTimeout": 1800,
+				// 60 minutes default
+				"defaultTimeout": 3600,
+				"objectStore": "ConcurrentSoftReferenceStore",
+				"reapFrequency": 120,
+				"resetTimeoutOnAccess": false,
+				"useLastAccessTimeouts": true
+			}
 		}
 	},
 	// These are the security settings for the runtime
@@ -315,81 +413,13 @@
 		// A list of Component names that will be disallowed from execution
 		// Ex: "disallowedComponents": [ "execute", "http" ]
 		"disallowedComponents": [],
+		// This is a boolean flag that determines if the server.system scope will be populated with the
+		// Java system properties and environment variables. By default this is set to true.
+		"populateServerSystemScope": true,
 		// An explicit whitelist of file extensions that are allowed to be uploaded - overrides any values in the disallowedWriteExtensions
 		"allowedFileOperationExtensions": [],
 		// The list of file extensions that are not allowed to be uploaded. Also enforced by file relocation operations ( e.g. copy/move )
-		"disallowedFileOperationExtensions": [
-			"bat",
-			"exe",
-			"cmd",
-			"cfm",
-			"cfc",
-			"cfs",
-			"bx",
-			"bxm",
-			"bxs",
-			"sh",
-			"php",
-			"pl",
-			"cgi",
-			"386",
-			"dll",
-			"com",
-			"torrent",
-			"js",
-			"app",
-			"jar",
-			"pif",
-			"vb",
-			"vbscript",
-			"wsf",
-			"asp",
-			"cer",
-			"csr",
-			"jsp",
-			"drv",
-			"sys",
-			"ade",
-			"adp",
-			"bas",
-			"chm",
-			"cpl",
-			"crt",
-			"csh",
-			"fxp",
-			"hlp",
-			"hta",
-			"inf",
-			"ins",
-			"isp",
-			"jse",
-			"htaccess",
-			"htpasswd",
-			"ksh",
-			"lnk",
-			"mdb",
-			"mde",
-			"mdt",
-			"mdw",
-			"msc",
-			"msi",
-			"msp",
-			"mst",
-			"ops",
-			"pcd",
-			"prg",
-			"reg",
-			"scr",
-			"sct",
-			"shb",
-			"shs",
-			"url",
-			"vbe",
-			"vbs",
-			"wsc",
-			"wsf",
-			"wsh"
-		]
+		"disallowedFileOperationExtensions": []
 	},
 	/**
 	 * The BoxLang module settings
