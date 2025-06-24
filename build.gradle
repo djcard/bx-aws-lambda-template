@@ -31,7 +31,7 @@ dependencies {
     // Testing Dependencies
 	//testImplementation files( 'src/resources/libs/boxlang-aws-lambda-' + boxlangVersion + '.jar' )
 	testImplementation 'com.amazonaws:aws-lambda-java-core:1.3.0'
-    testImplementation 'org.slf4j:slf4j-nop:2.0.6'
+    testImplementation 'org.slf4j:slf4j-nop:2.0.17'
 	// Testing Frameworks
     testImplementation "org.junit.jupiter:junit-jupiter:5.+"
 	testImplementation "org.mockito:mockito-core:5.+"
